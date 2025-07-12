@@ -5,6 +5,8 @@ import requests
 from dotenv import load_dotenv
 
 load_dotenv()  # Загружаем переменные из .env
+API_KEY = os.getenv("EXCHANGE_RATE_API_KEY")
+API_URL = os.getenv("EXCHANGE_RATE_API_URL")
 
 
 def load_operations(file_path: str) -> pd.DataFrame:
