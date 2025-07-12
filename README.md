@@ -95,4 +95,4 @@ poetry run pytest --cov=src
 ## Автор
 
 [Galina Mordovina](https://github.com/GalinaMordovina)  
-📧 glukoloid@gmail.com
+📧 glukoloid@gmail.com# разработка завершена
