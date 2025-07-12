@@ -96,3 +96,5 @@ poetry run pytest --cov=src
 
 [Galina Mordovina](https://github.com/GalinaMordovina)  
 📧 glukoloid@gmail.com
+
+изменения для создания ветки
