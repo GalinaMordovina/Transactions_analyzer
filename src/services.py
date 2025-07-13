@@ -5,7 +5,9 @@ from collections import defaultdict
 from typing import List, Dict
 
 
-def analyze_cashback_categories(data: list[dict], year: int, month: int) -> dict[str, float]:
+def analyze_cashback_categories(
+    data: list[dict], year: int, month: int
+) -> dict[str, float]:
     """
     Анализирует, сколько кешбэка можно получить по каждой категории.
     """
@@ -57,6 +59,7 @@ def investment_bank(month: str, transactions: list[dict], limit: int) -> float:
     logging.info(f"Инвесткопилка за {month}: {total_saved:.2f}")
     return round(total_saved, 2)
 
+
 logging.basicConfig(level=logging.INFO)
 
 
@@ -66,7 +69,8 @@ def simple_search(query: str, transactions: list[dict]) -> list[dict]:
     """
     query = query.lower()
     return [
-        tx for tx in transactions
+        tx
+        for tx in transactions
         if query in str(tx.get("Категория", "")).lower()
         or query in str(tx.get("Описание", "")).lower()
     ]
@@ -78,8 +82,7 @@ def find_phone_transactions(transactions: List[Dict]) -> List[Dict]:
     """
     phone_pattern = re.compile(r"\+7\s?\d{3}[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}")
     results = [
-        tx for tx in transactions
-        if phone_pattern.search(tx.get("Описание", ""))
+        tx for tx in transactions if phone_pattern.search(tx.get("Описание", ""))
     ]
 
     logging.info(f"Найдено {len(results)} транзакций с номерами телефонов.")
@@ -95,7 +98,8 @@ def find_personal_transfers(transactions: list[dict]) -> list[dict]:
     pattern = r"\b[А-ЯЁ][а-яё]+\s[А-ЯЁ]\."  # Пример: "Иван С."
 
     return [
-        tx for tx in transactions
+        tx
+        for tx in transactions
         if str(tx.get("Категория", "")).lower() == "переводы"
         and re.search(pattern, str(tx.get("Описание", "")))
     ]

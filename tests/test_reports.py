@@ -6,40 +6,64 @@ from src.main import convert_log_to_excel
 
 
 # Добавим src/ в sys.path, чтобы можно было импортировать модули
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
 
 from src.reports import (
     spending_by_category,
     spending_by_weekday,
     spending_by_workday,
-    save_report
+    save_report,
 )
 
 
 @pytest.fixture
 def sample_df():
-    return pd.DataFrame({
-        "Дата операции": [
-            "2024-10-01", "2024-10-02", "2024-10-03",
-            "2024-11-01", "2024-11-02", "2024-11-03",
-            "2024-12-01", "2024-12-02", "2024-12-03"
-        ],
-        "Сумма платежа": [-100, -200, -300, -400, -500, -600, -700, -800, -900],
-        "Категория": [
-            "Супермаркеты", "Супермаркеты", "Кафе",
-            "Супермаркеты", "Кафе", "Супермаркеты",
-            "Кафе", "Супермаркеты", "Супермаркеты"
-        ],
-        "Описание": [
-            "Магнит", "Пятерочка", "Кофейня",
-            "Перекресток", "Шоколадница", "Ашан",
-            "Кофейня", "Metro", "FixPrice"
-        ]
-    })
+    return pd.DataFrame(
+        {
+            "Дата операции": [
+                "2024-10-01",
+                "2024-10-02",
+                "2024-10-03",
+                "2024-11-01",
+                "2024-11-02",
+                "2024-11-03",
+                "2024-12-01",
+                "2024-12-02",
+                "2024-12-03",
+            ],
+            "Сумма платежа": [-100, -200, -300, -400, -500, -600, -700, -800, -900],
+            "Категория": [
+                "Супермаркеты",
+                "Супермаркеты",
+                "Кафе",
+                "Супермаркеты",
+                "Кафе",
+                "Супермаркеты",
+                "Кафе",
+                "Супермаркеты",
+                "Супермаркеты",
+            ],
+            "Описание": [
+                "Магнит",
+                "Пятерочка",
+                "Кофейня",
+                "Перекресток",
+                "Шоколадница",
+                "Ашан",
+                "Кофейня",
+                "Metro",
+                "FixPrice",
+            ],
+        }
+    )
 
 
 def test_spending_by_category(sample_df):
-    result = spending_by_category(sample_df, "Супермаркеты", "2024-12-01", save_to_file=False)
+    result = spending_by_category(
+        sample_df, "Супермаркеты", "2024-12-01", save_to_file=False
+    )
     assert isinstance(result, list)
     for row in result:
         assert "date" in row and "amount" in row and "description" in row
@@ -106,7 +130,7 @@ def test_convert_valid_log_to_excel(tmp_path):
     log_file.write_text(
         "2025-07-10 10:00:00 - INFO - Отчет сформирован\n"
         "2025-07-10 10:05:00 - ERROR - Ошибка при сохранении файла\n",
-        encoding="utf-8"
+        encoding="utf-8",
     )
 
     convert_log_to_excel(str(log_file), str(output_file))

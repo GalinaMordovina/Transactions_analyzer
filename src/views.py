@@ -7,7 +7,7 @@ from src.utils import (
     load_operations,
     filter_by_date,
     get_currency_rates,
-    get_stock_prices
+    get_stock_prices,
 )
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -43,11 +43,13 @@ def get_card_stats(df) -> list[dict]:
         total_spent = round(row["Сумма платежа"], 2)
         cashback = round(total_spent / 100, 2)
 
-        result.append({
-            "last_digits": last_digits,
-            "total_spent": total_spent,
-            "cashback": cashback
-        })
+        result.append(
+            {
+                "last_digits": last_digits,
+                "total_spent": total_spent,
+                "cashback": cashback,
+            }
+        )
 
     return result
 
@@ -60,17 +62,21 @@ def get_top_transactions(df, top_n=5) -> list[dict]:
 
     result = []
     for _, row in df_sorted.iterrows():
-        result.append({
-            "date": row["Дата операции"].strftime("%d.%m.%Y"),
-            "amount": round(row["Сумма платежа"], 2),
-            "category": row["Категория"],
-            "description": row["Описание"]
-        })
+        result.append(
+            {
+                "date": row["Дата операции"].strftime("%d.%m.%Y"),
+                "amount": round(row["Сумма платежа"], 2),
+                "category": row["Категория"],
+                "description": row["Описание"],
+            }
+        )
 
     return result
 
 
-def main_view(input_date: str, file_path: str = DATA_PATH, settings_path: str = SETTINGS_PATH) -> dict[str, Any]:
+def main_view(
+    input_date: str, file_path: str = DATA_PATH, settings_path: str = SETTINGS_PATH
+) -> dict[str, Any]:
     """
     Основная функция: собирает все данные в итоговый JSON для страницы "Главная".
     """
@@ -95,18 +101,22 @@ def main_view(input_date: str, file_path: str = DATA_PATH, settings_path: str = 
         "cards": cards,
         "top_transactions": top_tx,
         "currency_rates": currency_rates,
-        "stock_prices": stock_prices
+        "stock_prices": stock_prices,
     }
 
 
-def event_view(date_str: str, file_path: str = DATA_PATH, settings_path: str = SETTINGS_PATH) -> dict:
+def event_view(
+    date_str: str, file_path: str = DATA_PATH, settings_path: str = SETTINGS_PATH
+) -> dict:
     """
     Формирует данные для страницы "События".
     """
     df = load_operations(file_path)
     df_filtered = filter_by_date(df, date_str)
 
-    expenses = float(df_filtered[df_filtered["Сумма платежа"] < 0]["Сумма платежа"].sum())
+    expenses = float(
+        df_filtered[df_filtered["Сумма платежа"] < 0]["Сумма платежа"].sum()
+    )
     income = float(df_filtered[df_filtered["Сумма платежа"] > 0]["Сумма платежа"].sum())
 
     def filter_categories(dataframe, keyword):
@@ -115,8 +125,12 @@ def event_view(date_str: str, file_path: str = DATA_PATH, settings_path: str = S
     categories = {
         "main": df_filtered[
             ~df_filtered["Категория"].str.lower().str.contains("перевод|налич")
-        ]["Категория"].unique().tolist(),
-        "transfers": filter_categories(df_filtered, "перевод")["Категория"].unique().tolist(),
+        ]["Категория"]
+        .unique()
+        .tolist(),
+        "transfers": filter_categories(df_filtered, "перевод")["Категория"]
+        .unique()
+        .tolist(),
         "cash": filter_categories(df_filtered, "налич")["Категория"].unique().tolist(),
     }
 
@@ -131,5 +145,5 @@ def event_view(date_str: str, file_path: str = DATA_PATH, settings_path: str = S
         "income": round(income, 2),
         "categories": categories,
         "currency_rates": currency_rates,
-        "stock_prices": stock_prices
+        "stock_prices": stock_prices,
     }

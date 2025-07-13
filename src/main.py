@@ -8,7 +8,7 @@ from src.reports import (
     spending_by_category,
     spending_by_weekday,
     spending_by_workday,
-    convert_log_to_excel
+    convert_log_to_excel,
 )
 
 load_dotenv()
@@ -32,7 +32,9 @@ if __name__ == "__main__":
     print("\n=== Простой поиск ===")
     use_search = input("Хотите выполнить простой поиск? (да/нет): ").strip().lower()
     if use_search in ("да", "д", "yes", "y"):
-        query = input("Введите слово для поиска в описании или категории: ").strip().lower()
+        query = (
+            input("Введите слово для поиска в описании или категории: ").strip().lower()
+        )
         search_results = simple_search(query, transactions)
         if search_results:
             print(json.dumps(search_results[:3], ensure_ascii=False, indent=2))
@@ -43,7 +45,11 @@ if __name__ == "__main__":
 
     # Поиск по номерам телефонов
     print("\n=== Поиск по телефонным номерам ===")
-    use_phone = input("Хотите найти транзакции с номерами телефонов? (да/нет): ").strip().lower()
+    use_phone = (
+        input("Хотите найти транзакции с номерами телефонов? (да/нет): ")
+        .strip()
+        .lower()
+    )
     if use_phone in ("да", "д", "yes", "y"):
         phone_results = find_phone_transactions(transactions)
         if phone_results:
@@ -55,7 +61,9 @@ if __name__ == "__main__":
 
     # Поиск переводов физическим лицам
     print("\n=== Поиск переводов физическим лицам ===")
-    use_personal = input("Хотите найти переводы физическим лицам? (да/нет): ").strip().lower()
+    use_personal = (
+        input("Хотите найти переводы физическим лицам? (да/нет): ").strip().lower()
+    )
     if use_personal in ("да", "д", "yes", "y"):
         personal_results = find_personal_transfers(transactions)
         if personal_results:
@@ -66,11 +74,15 @@ if __name__ == "__main__":
         print("Поиск переводов пропущен.")
 
     # Получение даты от пользователя
-    date_input = input("Введите дату (в формате YYYY-MM-DD) или нажмите Enter для текущей даты: ")
+    date_input = input(
+        "Введите дату (в формате YYYY-MM-DD) или нажмите Enter для текущей даты: "
+    )
     date = date_input if date_input else None
 
     # Отчет по категории
-    category = input("Сформировать отчет по категории? (введите категорию или оставьте пустым): ")
+    category = input(
+        "Сформировать отчет по категории? (введите категорию или оставьте пустым): "
+    )
     if category:
         print(f"\n=== Отчет: Траты по категории '{category}' ===")
         report = spending_by_category(df, category, date, save_to_file=False)
@@ -84,7 +96,11 @@ if __name__ == "__main__":
         print(json.dumps(report, ensure_ascii=False, indent=2))
 
     # Отчет по рабочим/выходным дням
-    run_workday = input("Сформировать отчет по типу дня (рабочий/выходной)? (да/нет): ").strip().lower()
+    run_workday = (
+        input("Сформировать отчет по типу дня (рабочий/выходной)? (да/нет): ")
+        .strip()
+        .lower()
+    )
     if run_workday == "да":
         print("\n=== Отчет: Средние траты по типу дня ===")
         report = spending_by_workday(df, date, save_to_file=False)

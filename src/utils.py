@@ -37,9 +37,7 @@ def get_currency_rates(currencies: list[str]) -> list[dict]:
     if not api_key or not base_url:
         raise ValueError("Переменные API_KEY или API_URL не найдены в .env")
 
-    headers = {
-        "apikey": api_key
-    }
+    headers = {"apikey": api_key}
 
     response = requests.get(base_url, headers=headers)
 
@@ -53,10 +51,7 @@ def get_currency_rates(currencies: list[str]) -> list[dict]:
     for currency in currencies:
         rate = all_rates.get(currency)
         if rate is not None:
-            result.append({
-                "currency": currency,
-                "rate": round(rate, 2)
-            })
+            result.append({"currency": currency, "rate": round(rate, 2)})
 
     return result
 

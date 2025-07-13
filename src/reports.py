@@ -17,15 +17,17 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler("logs/activity.log", encoding="utf-8"),
-        logging.StreamHandler()
-    ]
+        logging.StreamHandler(),
+    ],
 )
+
 
 def save_report(func: Optional[Callable] = None, *, filename: Optional[str] = None):
     """
     Декоратор для сохранения результата функции-отчета в JSON-файл.
     Работает только если аргумент save_to_file=True
     """
+
     def decorator(inner_func):
         @wraps(inner_func)
         def wrapper(*args, **kwargs):
@@ -39,6 +41,7 @@ def save_report(func: Optional[Callable] = None, *, filename: Optional[str] = No
                 except Exception as e:
                     logging.error(f"Не удалось сохранить отчет: {e}")
             return result
+
         return wrapper
 
     if callable(func):
@@ -47,10 +50,12 @@ def save_report(func: Optional[Callable] = None, *, filename: Optional[str] = No
 
 
 @save_report
-def spending_by_category(transactions: pd.DataFrame,
-                         category: str,
-                         date: Optional[str] = None,
-                         save_to_file: bool = False) -> list[dict]:
+def spending_by_category(
+    transactions: pd.DataFrame,
+    category: str,
+    date: Optional[str] = None,
+    save_to_file: bool = False,
+) -> list[dict]:
     """
     Возвращает траты по заданной категории за последние три месяца от указанной даты.
     """
@@ -62,7 +67,9 @@ def spending_by_category(transactions: pd.DataFrame,
     start_date = end_date - timedelta(days=90)
 
     df = transactions.copy()
-    df["Дата операции"] = pd.to_datetime(df["Дата операции"], errors="coerce", dayfirst=True)
+    df["Дата операции"] = pd.to_datetime(
+        df["Дата операции"], errors="coerce", dayfirst=True
+    )
     df = df[(df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)]
 
     filtered = df[df["Категория"].astype(str).str.lower() == category.lower()]
@@ -72,7 +79,7 @@ def spending_by_category(transactions: pd.DataFrame,
         {
             "date": row["Дата операции"].strftime("%Y-%m-%d"),
             "amount": round(row["Сумма платежа"], 2),
-            "description": row.get("Описание", "")
+            "description": row.get("Описание", ""),
         }
         for _, row in expenses.iterrows()
     ]
@@ -82,9 +89,9 @@ def spending_by_category(transactions: pd.DataFrame,
 
 
 @save_report
-def spending_by_weekday(transactions: pd.DataFrame,
-                        date: Optional[str] = None,
-                        save_to_file: bool = False) -> list[dict]:
+def spending_by_weekday(
+    transactions: pd.DataFrame, date: Optional[str] = None, save_to_file: bool = False
+) -> list[dict]:
     """
     Возвращает средние траты в каждый из дней недели за последние 3 месяца.
     """
@@ -96,7 +103,9 @@ def spending_by_weekday(transactions: pd.DataFrame,
     start_date = end_date - timedelta(days=90)
 
     df = transactions.copy()
-    df["Дата операции"] = pd.to_datetime(df["Дата операции"], errors="coerce", dayfirst=True)
+    df["Дата операции"] = pd.to_datetime(
+        df["Дата операции"], errors="coerce", dayfirst=True
+    )
     df = df[(df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)]
     df = df[df["Сумма платежа"] < 0]
 
@@ -115,9 +124,9 @@ def spending_by_weekday(transactions: pd.DataFrame,
 
 
 @save_report
-def spending_by_workday(transactions: pd.DataFrame,
-                        date: Optional[str] = None,
-                        save_to_file: bool = False) -> dict[str, float]:
+def spending_by_workday(
+    transactions: pd.DataFrame, date: Optional[str] = None, save_to_file: bool = False
+) -> dict[str, float]:
     """
     Возвращает средние траты в рабочий и выходной день за последние 3 месяца.
     """
@@ -129,7 +138,9 @@ def spending_by_workday(transactions: pd.DataFrame,
     start_date = end_date - timedelta(days=90)
 
     df = transactions.copy()
-    df["Дата операции"] = pd.to_datetime(df["Дата операции"], errors="coerce", dayfirst=True)
+    df["Дата операции"] = pd.to_datetime(
+        df["Дата операции"], errors="coerce", dayfirst=True
+    )
     df = df[(df["Дата операции"] >= start_date) & (df["Дата операции"] <= end_date)]
     df = df[df["Сумма платежа"] < 0]
 
@@ -138,14 +149,16 @@ def spending_by_workday(transactions: pd.DataFrame,
 
     final_result = {
         "workday_avg": round(result.get(True, 0.0), 2),
-        "weekend_avg": round(result.get(False, 0.0), 2)
+        "weekend_avg": round(result.get(False, 0.0), 2),
     }
 
     logging.info("Сформирован отчет по тратам в рабочие и выходные дни")
     return final_result
 
 
-def convert_log_to_excel(log_file="logs/activity.log", output_file="logs/activity_report.xlsx") -> None:
+def convert_log_to_excel(
+    log_file="logs/activity.log", output_file="logs/activity_report.xlsx"
+) -> None:
     """
     Преобразует лог-файл в Excel-таблицу с колонками: Дата, Уровень, Сообщение
     """
